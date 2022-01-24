@@ -35,6 +35,8 @@
 </template>
 
 <script>
+import { login } from '@/api/user'
+import { generateMenu } from '@/config/menu'
 
 export default {
   name: 'login',
@@ -55,7 +57,6 @@ export default {
         ]
       },
       showPwd: false,
-      loading: false,
       redirect: '', // 回源地址
       otherQuery: '' // 路径其他传值
     }
@@ -81,17 +82,22 @@ export default {
       })
     },
     submitForm () {
-      this.$refs.loginForm.validate(valid => {
+      this.$refs.loginForm.validate(async valid => {
         if (valid) {
-          this.loading = true
-          this.$store.dispatch('login', this.loginForm)
-            .then(() => {
-              this.$router.push({ path: this.redirect || '/home', query: this.otherQuery })
-              this.loading = false
-            })
-            .catch(() => {
-              this.loading = false
-            })
+          // const param = {
+          //   account: this.loginForm.username,
+          //   password: this.loginForm.password
+          // }
+          const res = await login(this.loginForm.username)
+          if (res.status === 200) {
+            const menuList = generateMenu(res.data.permission)
+            this.$store.commit('SET_TOKEN', 1)
+            this.$store.commit('SET_USERINFO', res.data)
+            this.$store.commit('SET_MENULIST', menuList)
+            this.$router.push({ path: this.redirect || '/home', query: this.otherQuery })
+          } else {
+            this.$message.error('登录失败!')
+          }
         } else {
           return false
         }

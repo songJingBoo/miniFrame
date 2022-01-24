@@ -1,7 +1,7 @@
 <template>
-  <div class="home-page">
-    Home
-  </div>
+  <BasePage>
+    <h2>欢迎回来~ {{ $store.getters.username }}</h2>
+  </BasePage>
 </template>
 
 <script>
