@@ -1,5 +1,4 @@
 树-默认勾选父节点时会自动全勾子节点
-更新角色权限后-1.重新查询用户权限 2.刷新菜单
 
 .接口
 .组管理-添加成员-会重复
@@ -8,3 +7,10 @@
 
 测试
 .多搞几个用户测权限
+
+// MongoDB启动命令
+mongod --dbpath "C:\MongoDB\Server\4.0\data\db" --logpath "C:\MongoDB\Server\4.0\log\mongodb.log" --install --serviceName "MongoDB"
+net start MongoDB
+
+--save 和 --save-dev
+token应该放到sessionStorage还是localStorage里

@@ -45,8 +45,8 @@
         <el-form-item label="密码" prop="pwd">
           <el-input v-model="form.pwd" type="password"></el-input>
         </el-form-item>
-        <el-form-item label="昵称" prop="userName">
-          <el-input v-model="form.userName"></el-input>
+        <el-form-item label="昵称" prop="nickname">
+          <el-input v-model="form.nickname"></el-input>
         </el-form-item>
       </el-form>
 
@@ -90,7 +90,7 @@ export default {
       form: {
         account: '',
         pwd: '',
-        userName: ''
+        nickname: ''
       },
       rules: {
         account: [
@@ -100,7 +100,7 @@ export default {
         pwd: [
           { required: true, message: '请设置密码' }
         ],
-        userName: [
+        nickname: [
           { required: true, message: '请设置昵称' }
         ]
       },

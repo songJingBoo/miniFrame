@@ -3,16 +3,25 @@
     <el-form :model="loginForm" :rules="rules" ref="loginForm" class="form-container">
 
       <div class="title-container">
-        <h2 class="title">登 录</h2>
+        <h2 class="title">注 册</h2>
       </div>
 
       <el-form-item prop="email">
         <el-input
           v-model="loginForm.email"
-          type="email"
           autocomplete="off"
+          type="email"
           prefix-icon="el-icon-s-custom"
           placeholder="Email">
+        </el-input>
+      </el-form-item>
+
+      <el-form-item prop="nickname">
+        <el-input
+          v-model="loginForm.nickname"
+          autocomplete="off"
+          prefix-icon="el-icon-s-custom"
+          placeholder="nickname">
         </el-input>
       </el-form-item>
 
@@ -23,7 +32,21 @@
           autocomplete="off"
           :type="showPwd ? 'text' : 'password'"
           prefix-icon="el-icon-lock"
-          placeholder="Password">
+          placeholder="请设置密码">
+        </el-input>
+        <span class="password-icon" @click="togglePwd()">
+          <svg-icon :icon-class="showPwd ? 'open' : 'close'"></svg-icon>
+        </span>
+      </el-form-item>
+
+      <el-form-item prop="rePassword" class="password-box">
+        <el-input
+          ref="rePassword"
+          v-model="loginForm.rePassword"
+          autocomplete="off"
+          :type="showPwd ? 'text' : 'password'"
+          prefix-icon="el-icon-lock"
+          placeholder="再次输入密码">
         </el-input>
         <span class="password-icon" @click="togglePwd()">
           <svg-icon :icon-class="showPwd ? 'open' : 'close'"></svg-icon>
@@ -41,60 +64,55 @@
         <img class="captch-input__img" @click="updateCaptcha" :src="captchaUrl" alt="">
       </el-form-item>
 
-      <el-form-item prop="emailcode">
-        <el-input
-          class="emailcode-input"
-          v-model="loginForm.emailcode"
-          autocomplete="off"
-          prefix-icon="el-icon-lock"
-          placeholder="邮箱验证码">
-        </el-input>
-        <el-button class="emailcode-input__btn" type="primary" @click="sendMailCode">{{ sender.text }}</el-button>
-      </el-form-item>
-
       <el-form-item>
-        <el-button type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="submitForm">Login</el-button>
+        <el-button type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="submitForm">注 册</el-button>
       </el-form-item>
     </el-form>
   </div>
 </template>
 
 <script>
-import { login, sendMailCode } from '@/api/login'
-// import { generateMenu } from '@/config/menu'
 import md5 from 'md5'
+import { register } from '@/api/login'
 
 export default {
   name: 'login',
   data () {
     return {
       loginForm: {
-        email: '596812485@qq.com',
+        email: '123@qq.com',
+        nickname: 'test-user',
         password: 'zsxdc153',
-        captcha: '',
-        emailcode: ''
+        rePassword: 'zsxdc153',
+        captcha: ''
       },
       rules: {
         email: [
           { required: true, message: '请输入邮箱' },
           { type: 'email', message: '请输入正确的邮箱格式' }
         ],
+        nickname: [
+          { required: true, message: '请输入用户名' }
+        ],
         password: [
-          { required: true, message: '请输入密码', trigger: 'blur' },
-          { min: 6, max: 8, message: '长度在 6 到 8 个字符', trigger: 'blur' }
+          { required: true, pattern: /^[\w_-]{6,12}$/g, message: '请输入6~12位密码' }
+        ],
+        rePassword: [
+          { required: true, message: '请再次输入密码' },
+          {
+            validator: (rule, value, callback) => {
+              if (value !== this.loginForm.password) {
+                callback(new Error('两次密码不一致'))
+              }
+              callback()
+            }
+          }
         ],
         captcha: [
           { required: true, message: '请输入验证码' }
-        ],
-        emailcode: [
-          { required: true, message: '请输入邮箱验证码' }
         ]
       },
       captchaUrl: '/dev-api/captcha',
-      sender: {
-        timer: 0,
-        text: '发送'
-      },
       showPwd: false,
       redirect: '', // 回源地址
       otherQuery: '' // 路径其他传值
@@ -113,22 +131,6 @@ export default {
     }
   },
   methods: {
-    async sendMailCode () {
-      if (!this.loginForm.email) {
-        this.$message.info('请输入邮箱！')
-        return
-      }
-      await sendMailCode(this.loginForm.email)
-      this.sender.timer = 10
-      const timer = setInterval(() => {
-        this.sender.timer -= 1
-        this.sender.text = `${this.sender.timer}s后发送`
-        if (this.sender.timer <= 0) {
-          clearInterval(timer)
-          this.sender.text = '发送'
-        }
-      }, 1000)
-    },
     updateCaptcha () {
       this.captchaUrl = '/dev-api/captcha?v=' + new Date().getTime()
     },
@@ -144,19 +146,21 @@ export default {
         if (valid) {
           const param = {
             email: this.loginForm.email,
+            nickname: this.loginForm.nickname,
             password: md5(this.loginForm.password),
-            captcha: this.loginForm.captcha,
-            emailcode: this.loginForm.emailcode
+            captcha: this.loginForm.captcha
           }
-          const res = await login(param)
+          const res = await register(param)
           if (res.code === 200) {
-            this.$store.commit('SET_TOKEN', res.data.token)
-            this.$router.push({ path: this.redirect || '/home', query: this.otherQuery })
+            this.$alert('注册成功!', '成功', {
+              confirmButtonText: '去登录',
+              callback: () => {
+                this.$router.push('/login')
+              }
+            })
           } else {
             this.$message.error(res.message)
           }
-        } else {
-          return false
         }
       })
     },
@@ -209,15 +213,6 @@ export default {
     background: #fff;
     border-radius: 4px;
     vertical-align: middle;
-    margin-left: 10px;
-  }
-}
-
-.emailcode-input {
-  width: calc(100% - 110px);
-
-  &__btn {
-    width: 100px;
     margin-left: 10px;
   }
 }

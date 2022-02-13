@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import { login } from '@/api/user'
 import { generateMenu } from '@/config/menu'
+import router from '@/router'
 
 Vue.use(Vuex)
 
@@ -55,9 +56,9 @@ const mutations = {
 
 const actions = {
   login: ({ commit }, userInfo) => {
-    const { username, password } = userInfo
+    const { nickname, password } = userInfo
     return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password })
+      login({ nickname: nickname.trim(), password: password })
         .then(response => {
           commit('SET_USERINFO', response.data)
           resolve(response)
@@ -66,6 +67,10 @@ const actions = {
           reject(error)
         })
     })
+  },
+  logout: ({ commit }) => {
+    commit('DEL_TOKEN')
+    router.push({ path: '/login' })
   },
   updateMenu: async ({ commit }) => {
     const res = await login('admin')
@@ -79,7 +84,7 @@ const actions = {
 }
 
 const getters = {
-  username: state => state.userInfo.userName,
+  nickname: state => state.userInfo.nickname,
   permission: state => state.userInfo.permission,
   role: state => state.userInfo.role,
   userId: state => state.userInfo.userId

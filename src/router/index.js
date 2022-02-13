@@ -12,6 +12,10 @@ const routes = [
     component: Login
   },
   {
+    path: '/register',
+    component: () => import('@/views/register.vue')
+  },
+  {
     path: '*',
     component: Layout,
     redirect: '/home',

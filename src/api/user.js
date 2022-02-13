@@ -115,3 +115,18 @@ export function delPermission (data) {
     data
   })
 }
+
+export function getUserInfo (data) {
+  return request({
+    url: '/user/info',
+    method: 'get'
+  })
+}
+
+export function uploadFile (data) {
+  return request({
+    url: '/uploadfile',
+    method: 'post',
+    data
+  })
+}

@@ -1,7 +1,7 @@
+import Vue from 'vue'
 import axios from 'axios'
 import store from '@/store'
-import { getToken } from '@/utils/auth'
-import { Message } from 'element-ui'
+import { Message, MessageBox } from 'element-ui'
 
 // 1.创建axios实例
 const service = axios.create({
@@ -13,7 +13,7 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     if (store.state.token) {
-      config.headers['X-Token'] = getToken()
+      config.headers.Authorization = 'Bearer ' + store.state.token
     }
     return config
   },
@@ -25,12 +25,17 @@ service.interceptors.request.use(
 // 3.响应拦截
 service.interceptors.response.use(
   response => {
-    const res = response.data
-    if (res.code === 200) {
-      return res
-    } else { // 拦截公共错误码
-      return res
+    const { data } = response
+    if (data.code === -666) {
+      MessageBox.confirm('登录已过期', '过期', {
+        confirmButtonText: '去登录',
+        showCancelButton: false,
+        type: 'warning'
+      }).then(() => {
+        store.dispatch('logout')
+      })
     }
+    return data
   },
   error => {
     Message({
@@ -41,5 +46,5 @@ service.interceptors.response.use(
     return Promise.reject(error)
   }
 )
-
+Vue.prototype.$http = service
 export default service

@@ -42,10 +42,10 @@
         <el-dropdown>
           <div class="header-box__userBox">
             <i class="header-box__avatar el-icon-user-solid"></i>
-            {{ $store.getters.username }}
+            {{ $store.getters.nickname }}
           </div>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>退出登录</el-dropdown-item>
+            <el-dropdown-item @click.native="$store.dispatch('logout')">退出登录</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </el-header>
