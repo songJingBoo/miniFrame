@@ -5,6 +5,7 @@ function resolve (dir) {
 }
 
 module.exports = {
+  lintOnSave: false,
   configureWebpack: {
     resolve: {
       alias: {
@@ -17,11 +18,12 @@ module.exports = {
         [process.env.VUE_APP_BASE_API]: {
           // target: 'https://mock.mengxuegu.com/mock/61700d0a4351af34a2ddf6ad/dev-api', // easy-mock自建项目地址
           // target: 'http://121.43.224.27:8083/', // chengshentao swagger地址
-          target: 'http://127.0.0.1:7001/',
+          // target: 'http://127.0.0.1:7001/',
+          target: 'http://localhost:3000/',
           changeOrigin: true,
-          pathRewrite: {
-            ['^' + process.env.VUE_APP_BASE_API]: ''
-          }
+          // pathRewrite: {
+          //   ['^' + process.env.VUE_APP_BASE_API]: ''
+          // }
         }
       }
     }

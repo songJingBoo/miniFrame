@@ -80,8 +80,8 @@ export default {
   data () {
     return {
       loginForm: {
-        email: '123@qq.com',
-        nickname: 'test-user',
+        email: '596812485@qq.com',
+        nickname: 'songjingbo',
         password: 'zsxdc153',
         rePassword: 'zsxdc153',
         captcha: ''
@@ -112,7 +112,7 @@ export default {
           { required: true, message: '请输入验证码' }
         ]
       },
-      captchaUrl: '/dev-api/captcha',
+      captchaUrl: `${process.env.VUE_APP_BASE_API}/captcha`,
       showPwd: false,
       redirect: '', // 回源地址
       otherQuery: '' // 路径其他传值
@@ -132,7 +132,7 @@ export default {
   },
   methods: {
     updateCaptcha () {
-      this.captchaUrl = '/dev-api/captcha?v=' + new Date().getTime()
+      this.captchaUrl = `${process.env.VUE_APP_BASE_API}/captcha?v=${new Date().getTime()}`
     },
     togglePwd () {
       this.showPwd = !this.showPwd

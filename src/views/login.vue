@@ -90,7 +90,7 @@ export default {
           { required: true, message: '请输入邮箱验证码' }
         ]
       },
-      captchaUrl: '/dev-api/captcha',
+      captchaUrl: `${process.env.VUE_APP_BASE_API}/captcha`,
       sender: {
         timer: 0,
         text: '发送'
@@ -130,7 +130,7 @@ export default {
       }, 1000)
     },
     updateCaptcha () {
-      this.captchaUrl = '/dev-api/captcha?v=' + new Date().getTime()
+      this.captchaUrl = `${process.env.VUE_APP_BASE_API}/captcha?v=${new Date().getTime()}`
     },
     togglePwd () {
       this.showPwd = !this.showPwd
@@ -151,7 +151,7 @@ export default {
           const res = await login(param)
           if (res.code === 200) {
             this.$store.commit('SET_TOKEN', res.data.token)
-            this.$router.push({ path: this.redirect || '/home', query: this.otherQuery })
+            this.$router.push({ path: this.redirect || '/project', query: this.otherQuery })
           } else {
             this.$message.error(res.message)
           }

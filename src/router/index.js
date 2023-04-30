@@ -1,8 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Login from '@/views/login.vue'
-import Layout from '@/layout/index.vue'
-import { generateRoutes } from '@/config/menu'
 
 Vue.use(VueRouter)
 
@@ -16,10 +14,23 @@ const routes = [
     component: () => import('@/views/register.vue')
   },
   {
+    path: '/project',
+    component: () => import('@/layout/index.vue'),
+    redirect: '/project/chat',
+    children: [
+      {
+        path: 'chat',
+        component: () => import('@/views/chat.vue')
+      },
+      {
+        path: 'upload',
+        component: () => import('@/views/upload.vue')
+      },
+    ]
+  },
+  {
     path: '*',
-    component: Layout,
-    redirect: '/home',
-    children: generateRoutes()
+    redirect: '/project'
   }
 ]
 
@@ -33,9 +44,13 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('PER_TOKEN')
   if (token) {
-    next()
-  } else {
     if (to.path === '/login') {
+      next(from.path)
+    } else {
+      next()
+    }
+  } else {
+    if (to.path === '/login' || to.path === '/register') {
       next()
     } else {
       next(`/login?redirect=${to.path}`)

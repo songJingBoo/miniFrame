@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import { login } from '@/api/user'
-import { generateMenu } from '@/config/menu'
 import router from '@/router'
 
 Vue.use(Vuex)
@@ -43,14 +42,6 @@ const mutations = {
   },
   DEL_USERINFO: (state) => {
     localStorage.removeItem('USERINFO')
-  },
-  SET_MENULIST: (state, menuList) => {
-    localStorage.setItem('MENULIST', JSON.stringify(menuList))
-    state.menuList = menuList
-  },
-  DEL_MENULIST: (state) => {
-    localStorage.removeItem('MENULIST')
-    state.menuList = []
   }
 }
 
@@ -70,16 +61,8 @@ const actions = {
   },
   logout: ({ commit }) => {
     commit('DEL_TOKEN')
+    commit('DEL_USERINFO')
     router.push({ path: '/login' })
-  },
-  updateMenu: async ({ commit }) => {
-    const res = await login('admin')
-    if (res.status === 200) {
-      const menuList = generateMenu(res.data.permission)
-      commit('SET_MENULIST', menuList)
-    } else {
-      this.$message.error('登录失败!')
-    }
   }
 }
 
