@@ -1,6 +1,0 @@
-MongoDB启动命令:
-mongod --dbpath "C:\MongoDB\Server\4.0\data\db" --logpath "C:\MongoDB\Server\4.0\log\mongodb.log" --install --serviceName "MongoDB"
-net start MongoDB
-
---save 和 --save-dev
-token应该放到sessionStorage还是localStorage里
